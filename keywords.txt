@@ -1,0 +1,40 @@
+#######################################
+# Syntax Coloring Map For Timer Library
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+QTimer	KEYWORD1
+EventDeque KEYWORD1
+Event	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+# QTimer methods
+after	KEYWORD2
+every	KEYWORD2
+stop	KEYWORD2
+update	KEYWORD2
+
+# EventDeque methods
+getHead KEYWORD2
+getTail KEYWORD2
+addEvent KEYWORD2
+popHead KEYWORD2
+deleteHead KEYWORD2
+popTail KEYWORD2
+deleteTail KEYWORD2
+popTarget KEYWORD2
+deleteTarget KEYWORD2
+
+#######################################
+# Instances (KEYWORD2)
+#######################################
+
+#######################################
+# Constants (LITERAL1)
+#######################################.
