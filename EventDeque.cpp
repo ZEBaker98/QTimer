@@ -21,6 +21,7 @@
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 
+#include "Arduino.h"
 #include "EventDeque.h"
 #include "Event.h"
 

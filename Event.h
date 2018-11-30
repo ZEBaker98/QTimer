@@ -24,6 +24,8 @@
 #ifndef Event_h
 #define Event_h
 
+#include "Arduino.h"
+
 struct Event {
   // pointers to previos and next nodes
   Event *prev, *next;
