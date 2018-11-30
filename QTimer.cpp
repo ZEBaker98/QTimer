@@ -82,7 +82,7 @@ void QTimer::update(unsigned long now, Event *target) {
   if(target == nullptr) return;
 
   // if target should be triggered at current time, trigger it, otherwise update next event
-  if(target->start + target->period <= now) {
+  if(now - target->start >= target->period) {
 
     // if the target has remaining repeats and does not repeat forever (negative repeat value), call its callback
     if(target->repeatCount != 0) (*target->callback)();
