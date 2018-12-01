@@ -24,19 +24,14 @@
 #include "Arduino.h"
 #include "QTimer.h"
 #include "EventDeque.h"
-#include "Event.h"
+#include "Events.h"
 
 // adds a new event to the deque and returns a pointer to it
-Event* QTimer::newEvent(unsigned long period, void (*callback)(), int repeatCount) {
-  Event *newEvent = new Event;
+CallbackEvent* QTimer::newCallbackEvent(unsigned long period, void (*callback)(), int repeatCount) {
+  CallbackEvent *newEvent = new CallbackEvent(callback);
   newEvent->start = millis();
   newEvent->period = period;
   newEvent->repeatCount = repeatCount;
-  newEvent->callback = callback;
-  
-  // sets prev and next pointers to null
-  newEvent->prev = nullptr;
-  newEvent->next = nullptr;
 
   // adds event to deque
   ed.addEvent(newEvent);
@@ -46,22 +41,22 @@ Event* QTimer::newEvent(unsigned long period, void (*callback)(), int repeatCoun
 }
 
 // creates a one time event that will call the callback after duration
-Event* QTimer::after(unsigned long duration, void (*callback)()) {
-  return newEvent(duration, callback, 1);
+BaseEvent* QTimer::after(unsigned long duration, void (*callback)()) {
+  return newCallbackEvent(duration, callback, 1);
 }
 
 // creates an event that calls the callback every period
-Event* QTimer::every(unsigned long period, void (*callback)()) {
-  return newEvent(period, callback, -1);
+BaseEvent* QTimer::every(unsigned long period, void (*callback)()) {
+  return newCallbackEvent(period, callback, -1);
 }
 
 // creates an event that calls the callback every period repeatCount times
-Event* QTimer::every(unsigned long period, void (*callback)(), int repeatCount) {
-  return newEvent(period, callback, repeatCount);
+BaseEvent* QTimer::every(unsigned long period, void (*callback)(), int repeatCount) {
+  return newCallbackEvent(period, callback, repeatCount);
 }
 
 // cancels an event at a pointer
-void QTimer::stop(Event *target) {
+void QTimer::stop(BaseEvent *target) {
   target->repeatCount = 0;
 }
 
@@ -76,7 +71,7 @@ void QTimer::update(unsigned long now) {
 }
 
 // updates all Events after target at a given time
-void QTimer::update(unsigned long now, Event *target) {
+void QTimer::update(unsigned long now, BaseEvent *target) {
 
   // if target is null, return
   if(target == nullptr) return;
@@ -85,7 +80,7 @@ void QTimer::update(unsigned long now, Event *target) {
   if(now - target->start >= target->period) {
 
     // if the target has remaining repeats and does not repeat forever (negative repeat value), call its callback
-    if(target->repeatCount != 0) (*target->callback)();
+    if(target->repeatCount != 0) target->trigger();
 
     // if target has a next, update it
     if(target->next != nullptr) update(now, target->next);

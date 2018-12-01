@@ -23,7 +23,7 @@
 
 #include "Arduino.h"
 #include "EventDeque.h"
-#include "Event.h"
+#include "Events.h"
 
 // initialized head and tail to null
 EventDeque::EventDeque() {
@@ -32,7 +32,7 @@ EventDeque::EventDeque() {
 }
 
 // addes an event by pointer to deque
-Event* EventDeque::addEvent(Event *newEvent) {
+BaseEvent* EventDeque::addEvent(BaseEvent *newEvent) {
 
   // if head is null (Empty Deque), set newEvent as head and tail
   // else, add newEvent to current tail as next and set tail to newEvent
@@ -51,28 +51,28 @@ Event* EventDeque::addEvent(Event *newEvent) {
   return newEvent;
 }
 
-// pops and returns the Event at the head
-Event* EventDeque::popHead() {
+// pops and returns the BaseEvent at the head
+BaseEvent* EventDeque::popHead() {
   return popTarget(head);
 }
 
-// deletes the Event at the head
+// deletes the BaseEvent at the head
 void EventDeque::deleteHead() {
   delete popHead();
 }
 
-// pops and returns the Event at the tail
-Event* EventDeque::popTail() {
+// pops and returns the BaseEvent at the tail
+BaseEvent* EventDeque::popTail() {
   return popTarget(tail);
 }
 
-// deletes the Event at the tail
+// deletes the BaseEvent at the tail
 void EventDeque::deleteTail() {
   delete popTail();
 }
 
-// pops and returns an Event at a target pointer
-Event* EventDeque::popTarget(Event *target) {
+// pops and returns an BaseEvent at a target pointer
+BaseEvent* EventDeque::popTarget(BaseEvent *target) {
 
   // if target is null, jump to return and return null
   if (target != nullptr) {
@@ -104,7 +104,7 @@ Event* EventDeque::popTarget(Event *target) {
   return target;
 }
 
-// deletes an Event at a target pointer
-void EventDeque::deleteTarget(Event *target) {
+// deletes an BaseEvent at a target pointer
+void EventDeque::deleteTarget(BaseEvent *target) {
   delete popTarget(target);
 }

@@ -25,35 +25,35 @@
 #define EventDeque_h
 
 #include "Arduino.h"
-#include "Event.h"
+#include "Events.h"
 
 class EventDeque {
   private:
     // pointer to head and tail of deque
-    Event *head, *tail;
+    BaseEvent *head, *tail;
 
   public:
     // constuctor, initialzes pointers to nullptr
     EventDeque();
 
     // accessors for head and tail
-    Event* getHead() { return head; }
-    Event* getTail() { return tail; }
+    BaseEvent* getHead() { return head; }
+    BaseEvent* getTail() { return tail; }
 
     // adds an event by pointer to deque, returns pointer of added event
-    Event* addEvent(Event *newEvent);
+    BaseEvent* addEvent(BaseEvent *newEvent);
 
-    // pops or deletes the Event at the head of the deck
-    Event* popHead();
+    // pops or deletes the BaseEvent at the head of the deck
+    BaseEvent* popHead();
     void deleteHead();
 
-    // pops or deletes the Event at the tail of the deck
-    Event* popTail();
+    // pops or deletes the BaseEvent at the tail of the deck
+    BaseEvent* popTail();
     void deleteTail();
 
     // pops or deletes an event at a target location in memory
-    Event* popTarget(Event *target);
-    void deleteTarget(Event *target);
+    BaseEvent* popTarget(BaseEvent *target);
+    void deleteTarget(BaseEvent *target);
 };
 
 #endif
