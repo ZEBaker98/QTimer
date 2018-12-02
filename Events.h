@@ -24,7 +24,7 @@
 #ifndef Events_h
 #define Events_h
 
-//#include "Arduino.h"
+#include "Arduino.h"
 #include "stdint.h"
 
 class BaseEvent {

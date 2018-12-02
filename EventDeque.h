@@ -25,6 +25,8 @@
 #define EventDeque_h
 
 #include "Arduino.h"
+#include "stdint.h"
+
 #include "Events.h"
 
 class EventDeque {

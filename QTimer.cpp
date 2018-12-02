@@ -22,6 +22,8 @@
 
 
 #include "Arduino.h"
+#include "stdint.h"
+
 #include "QTimer.h"
 #include "EventDeque.h"
 #include "Events.h"
@@ -34,35 +36,42 @@ CallbackEvent* QTimer::newCallbackEvent(uint32_t period, void (*callback)(), uin
 }
 
 // adds a new pin event to the deque and returns a pointer to it
-PinEvent* QTimer::newPinEvent(uint32_t  period, uint8_t pin, uint8_t startingState, uint16_t toggleCount) {
+PinEvent* QTimer::newPinEvent(uint8_t pin, uint32_t  period, uint8_t startingState, uint16_t toggleCount) {
   PinEvent *newEvent = new PinEvent(pin, startingState, millis(), period, toggleCount);
   ed.addEvent(newEvent);
   return newEvent;
 }
 
 // creates a one time event that will call the callback after duration
-BaseEvent* QTimer::after(unsigned long duration, void (*callback)()) {
+BaseEvent* QTimer::after(uint32_t duration, void (*callback)()) {
   return newCallbackEvent(duration, callback, 1);
 }
 
 // creates an event that calls the callback every period
-BaseEvent* QTimer::every(unsigned long period, void (*callback)()) {
+BaseEvent* QTimer::every(uint32_t period, void (*callback)()) {
   return newCallbackEvent(period, callback, -1);
 }
 
 // creates an event that calls the callback every period repeatCount times
-BaseEvent* QTimer::every(unsigned long period, void (*callback)(), int repeatCount) {
+BaseEvent* QTimer::every(uint32_t period, void (*callback)(), uint16_t repeatCount) {
   return newCallbackEvent(period, callback, repeatCount);
 }
 
 // creates a pin event that oscilates
-BaseEvent* QTimer::oscillate(uint8_t pin, unsigned long period, uint8_t startingState) {
-  return newPinEvent(period, pin, startingState, -1);
+BaseEvent* QTimer::oscillate(uint8_t pin, uint32_t period, uint8_t startingState) {
+  return newPinEvent(pin, period, startingState, -1);
 }
 
 // creates a pin event that oscilates
-BaseEvent* QTimer::oscillate(uint8_t pin, unsigned long period, uint8_t startingState, uint16_t repeatCount) {
-  return newPinEvent(period, pin, startingState, repeatCount * 2); // repeat count is doubled because each repeat requires toggling the pin twice
+BaseEvent* QTimer::oscillate(uint8_t pin, uint32_t period, uint8_t startingState, uint16_t repeatCount) {
+  BaseEvent* event = newPinEvent(pin, period, startingState, repeatCount*2 - 1);
+  event->trigger();
+  return event;
+}
+
+// creates a pulse of length period
+BaseEvent* QTimer::pulse(uint8_t pin, uint32_t period, uint8_t startingState) {
+  return oscillate(pin, period, startingState, 1);
 }
 
 // cancels an event at a pointer
@@ -76,12 +85,12 @@ void QTimer::update() {
 }
 
 // updates all Events in the deque at a given time
-void QTimer::update(unsigned long now) {
+void QTimer::update(uint32_t now) {
   update(now, ed.getHead());
 }
 
 // updates all Events after target at a given time
-void QTimer::update(unsigned long now, BaseEvent *target) {
+void QTimer::update(uint32_t now, BaseEvent *target) {
 
   // if target is null, return
   if(target == nullptr) return;

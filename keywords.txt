@@ -7,10 +7,10 @@
 #######################################
 
 QTimer	KEYWORD1
-EventDeque KEYWORD1
+EventDeque	KEYWORD1
 BaseEvent	KEYWORD1
-CallbackEvent KEYWORD1
-
+CallbackEvent	KEYWORD1
+PinEvent	KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
@@ -19,20 +19,24 @@ CallbackEvent KEYWORD1
 # QTimer methods
 after	KEYWORD2
 every	KEYWORD2
-oscillate KEYWORD2
+oscillate	KEYWORD2
+pulse	KEYWORD2
 stop	KEYWORD2
 update	KEYWORD2
 
 # EventDeque methods
-getHead KEYWORD2
-getTail KEYWORD2
-addEvent KEYWORD2
-popHead KEYWORD2
-deleteHead KEYWORD2
-popTail KEYWORD2
-deleteTail KEYWORD2
-popTarget KEYWORD2
-deleteTarget KEYWORD2
+getHead	KEYWORD2
+getTail	KEYWORD2
+addEvent	KEYWORD2
+popHead	KEYWORD2
+deleteHead	KEYWORD2
+popTail	KEYWORD2
+deleteTail	KEYWORD2
+popTarget	KEYWORD2
+deleteTarget	KEYWORD2
+
+# BaseEvent methods
+trigger	KEYWORD2
 
 #######################################
 # Instances (KEYWORD2)

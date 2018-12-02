@@ -22,6 +22,8 @@
 
 
 #include "Arduino.h"
+#include "stdint.h"
+
 #include "EventDeque.h"
 #include "Events.h"
 

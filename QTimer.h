@@ -38,7 +38,7 @@ class QTimer {
     // private callback event creator used by public event creators
     CallbackEvent* newCallbackEvent(uint32_t  period, void (*callback)(), uint16_t repeatCount);
 
-    PinEvent* newPinEvent(uint32_t  period, uint8_t pin, uint8_t startingState, uint16_t toggleCount);
+    PinEvent* newPinEvent(uint8_t pin, uint32_t  period, uint8_t startingState, uint16_t toggleCount);
 
     // private updater used by public updators
     // updates a target and all following targets recursively
@@ -49,15 +49,17 @@ class QTimer {
     // duration / period is given in milliseconds
     // each returns a pointer to the Event created
     // after -> creates an event that triggers once after duration
-    BaseEvent* after(unsigned long duration, void (*callback)());
+    BaseEvent* after(uint32_t duration, void (*callback)());
     // every -> creates an event that triggers every period
-    BaseEvent* every(unsigned long period, void (*callback)());
+    BaseEvent* every(uint32_t period, void (*callback)());
     // every -> creates an event that triggers every period a specific number of times
-    BaseEvent* every(unsigned long period, void (*callback)(), int repeatCount);
+    BaseEvent* every(uint32_t period, void (*callback)(),uint16_t repeatCount);
     // oscillate -> toggles the state between high and low on a pin every period
-    BaseEvent* oscillate(uint8_t pin, unsigned long period, uint8_t startingState);
+    BaseEvent* oscillate(uint8_t pin, uint32_t period, uint8_t startingState);
     // oscillate -> toggles the state between high and low on a pin every period a specific number of times
-    BaseEvent* oscillate(uint8_t pin, unsigned long period, uint8_t startingState, uint16_t repeatCount);
+    BaseEvent* oscillate(uint8_t pin, uint32_t period, uint8_t startingState, uint16_t repeatCount);
+    // pulse -> generates a pulse of length period, one period after call
+    BaseEvent* pulse(uint8_t pin, uint32_t period, uint8_t startingState);
 
     // cancels an event, it will be cleaned up from memory next time the timer is updated
     void stop(BaseEvent *target); 
@@ -66,7 +68,7 @@ class QTimer {
     void update();
 
     // updates the timer, triggering events that fall at a given time
-    void update(unsigned long now);
+    void update(uint32_t now);
 };
 
 #endif
