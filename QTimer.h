@@ -25,6 +25,8 @@
 #define QTimer_h
 
 #include "Arduino.h"
+#include "stdint.h"
+
 #include "EventDeque.h"
 #include "Events.h"
 
@@ -33,12 +35,14 @@ class QTimer {
     // EventDeque to hold events
     EventDeque ed;
 
-    // private event creator used by public event creators
-    CallbackEvent* newCallbackEvent(unsigned long period, void (*callback)(), int repeatCount);
+    // private callback event creator used by public event creators
+    CallbackEvent* newCallbackEvent(uint32_t  period, void (*callback)(), uint16_t repeatCount);
+
+    PinEvent* newPinEvent(uint32_t  period, uint8_t pin, uint8_t startingState, uint16_t toggleCount);
 
     // private updater used by public updators
     // updates a target and all following targets recursively
-    void update(unsigned long now, BaseEvent *target);
+    void update(uint32_t  now, BaseEvent *target);
 
   public:
     // public event creators
@@ -50,6 +54,10 @@ class QTimer {
     BaseEvent* every(unsigned long period, void (*callback)());
     // every -> creates an event that triggers every period a specific number of times
     BaseEvent* every(unsigned long period, void (*callback)(), int repeatCount);
+    // oscillate -> toggles the state between high and low on a pin every period
+    BaseEvent* oscillate(uint8_t pin, unsigned long period, uint8_t startingState);
+    // oscillate -> toggles the state between high and low on a pin every period a specific number of times
+    BaseEvent* oscillate(uint8_t pin, unsigned long period, uint8_t startingState, uint16_t repeatCount);
 
     // cancels an event, it will be cleaned up from memory next time the timer is updated
     void stop(BaseEvent *target); 

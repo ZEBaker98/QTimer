@@ -24,49 +24,48 @@
 #ifndef Events_h
 #define Events_h
 
-#include "Arduino.h"
+//#include "Arduino.h"
 #include "stdint.h"
 
 class BaseEvent {
   public:
-    // pointers to prev & next nodes
-    BaseEvent *prev, *next;
+    BaseEvent *prev, *next; // pointers to prev & next nodes
+    uint32_t start, period; // start time in ms & time between triggers
+    uint16_t repeatCount; // how many times to repeat event (negative means forever)
 
-    // start -> time in milliseconds after program start when Event was created / last time event was called
-    // period -> time in millisecond after start until callback call
-    uint32_t start, period;
-
-    // repeatCount -> how many times to repeat event (negative means forever)
-    uint16_t repeatCount;
-
-    // Default constructor sets pointers to nullptr
-    BaseEvent()
-      : prev(nullptr), next(nullptr) 
-    {
-    }
+    // Constructors
+    BaseEvent();
+    BaseEvent(uint32_t start, uint32_t period, uint16_t repeatCount);
 
     // trigger method, base class does nothing when triggered
-    virtual void trigger() {
-      return;
-    }
+    virtual void trigger();
 };
 
 class CallbackEvent : public BaseEvent {
   private:
-    // holds pointer to callback function
-    void (*callback)();
+    void (*callback)(); // holds pointer to callback function
 
   public:
-    // Constructor sets callback function and calls base constructor
-    CallbackEvent(void (*callback)())
-      : callback(callback)
-    {
-    }
+    // Constructors
+    CallbackEvent(void (*callback)());
+    CallbackEvent(void (*callback)(), uint32_t start, uint32_t period, uint16_t repeatCount);
 
     // Override of trigger function calls callback function
-    void trigger() { 
-      if (this->callback != nullptr) (*this->callback)();
-    }
+    void trigger();
+};
+
+class PinEvent : public BaseEvent {
+  private:
+    uint8_t pin; // pin to be toggled
+    uint8_t state; // holds state of pin
+
+  public:
+    // Constructors
+    PinEvent(uint8_t pin, uint8_t state);
+    PinEvent(uint8_t pin, uint8_t state, uint32_t start, uint32_t period, uint16_t repeatCount);
+
+    // Override of trigger function toggle pin state
+    void trigger();
 };
 
 #endif

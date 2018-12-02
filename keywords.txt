@@ -8,7 +8,9 @@
 
 QTimer	KEYWORD1
 EventDeque KEYWORD1
-Event	KEYWORD1
+BaseEvent	KEYWORD1
+CallbackEvent KEYWORD1
+
 
 #######################################
 # Methods and Functions (KEYWORD2)
@@ -17,6 +19,7 @@ Event	KEYWORD1
 # QTimer methods
 after	KEYWORD2
 every	KEYWORD2
+oscillate KEYWORD2
 stop	KEYWORD2
 update	KEYWORD2
 

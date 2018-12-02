@@ -26,17 +26,17 @@
 #include "EventDeque.h"
 #include "Events.h"
 
-// adds a new event to the deque and returns a pointer to it
-CallbackEvent* QTimer::newCallbackEvent(unsigned long period, void (*callback)(), int repeatCount) {
-  CallbackEvent *newEvent = new CallbackEvent(callback);
-  newEvent->start = millis();
-  newEvent->period = period;
-  newEvent->repeatCount = repeatCount;
-
-  // adds event to deque
+// adds a new callback event to the deque and returns a pointer to it
+CallbackEvent* QTimer::newCallbackEvent(uint32_t period, void (*callback)(), uint16_t repeatCount) {
+  CallbackEvent *newEvent = new CallbackEvent(callback, millis(), period, repeatCount);
   ed.addEvent(newEvent);
+  return newEvent;
+}
 
-  // returns pointer
+// adds a new pin event to the deque and returns a pointer to it
+PinEvent* QTimer::newPinEvent(uint32_t  period, uint8_t pin, uint8_t startingState, uint16_t toggleCount) {
+  PinEvent *newEvent = new PinEvent(pin, startingState, millis(), period, toggleCount);
+  ed.addEvent(newEvent);
   return newEvent;
 }
 
@@ -53,6 +53,16 @@ BaseEvent* QTimer::every(unsigned long period, void (*callback)()) {
 // creates an event that calls the callback every period repeatCount times
 BaseEvent* QTimer::every(unsigned long period, void (*callback)(), int repeatCount) {
   return newCallbackEvent(period, callback, repeatCount);
+}
+
+// creates a pin event that oscilates
+BaseEvent* QTimer::oscillate(uint8_t pin, unsigned long period, uint8_t startingState) {
+  return newPinEvent(period, pin, startingState, -1);
+}
+
+// creates a pin event that oscilates
+BaseEvent* QTimer::oscillate(uint8_t pin, unsigned long period, uint8_t startingState, uint16_t repeatCount) {
+  return newPinEvent(period, pin, startingState, repeatCount * 2); // repeat count is doubled because each repeat requires toggling the pin twice
 }
 
 // cancels an event at a pointer
