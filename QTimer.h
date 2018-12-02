@@ -32,12 +32,13 @@
 
 class QTimer {
   private:
-    // EventDeque to hold events
-    EventDeque ed;
+    uint8_t eventCount; // counts events created
+    EventDeque ed; // EventDeque to hold events
 
     // private callback event creator used by public event creators
     CallbackEvent* newCallbackEvent(uint32_t  period, void (*callback)(), uint16_t repeatCount);
 
+    // private pin event creator used by other public event creators
     PinEvent* newPinEvent(uint8_t pin, uint32_t  period, uint8_t startingState, uint16_t toggleCount);
 
     // private updater used by public updators
@@ -45,26 +46,35 @@ class QTimer {
     void update(uint32_t  now, BaseEvent *target);
 
   public:
+    // Constructor
+    QTimer()
+      : eventCount(0)
+    {
+    }
+
     // public event creators
     // duration / period is given in milliseconds
-    // each returns a pointer to the Event created
+    // each returns the id of the event created
     // after -> creates an event that triggers once after duration
-    BaseEvent* after(uint32_t duration, void (*callback)());
+    uint8_t after(uint32_t duration, void (*callback)());
     // every -> creates an event that triggers every period
-    BaseEvent* every(uint32_t period, void (*callback)());
+    uint8_t every(uint32_t period, void (*callback)());
     // every -> creates an event that triggers every period a specific number of times
-    BaseEvent* every(uint32_t period, void (*callback)(),uint16_t repeatCount);
+    uint8_t every(uint32_t period, void (*callback)(),uint16_t repeatCount);
     // oscillate -> toggles the state between high and low on a pin every period
-    BaseEvent* oscillate(uint8_t pin, uint32_t period, uint8_t startingState);
+    uint8_t oscillate(uint8_t pin, uint32_t period, uint8_t startingState);
     // oscillate -> toggles the state between high and low on a pin every period a specific number of times
-    BaseEvent* oscillate(uint8_t pin, uint32_t period, uint8_t startingState, uint16_t repeatCount);
+    uint8_t oscillate(uint8_t pin, uint32_t period, uint8_t startingState, uint16_t repeatCount);
     // pulse -> generates a pulse of length period, one period after call
-    BaseEvent* pulse(uint8_t pin, uint32_t period, uint8_t startingState);
+    uint8_t pulse(uint8_t pin, uint32_t period, uint8_t startingState);
 
-    // cancels an event, it will be cleaned up from memory next time the timer is updated
-    void stop(BaseEvent *target); 
+    // cancels an event when passed an event id, it will be cleaned up from memory next time the timer is updated
+    void stop(uint8_t targetID); 
 
-    // updates the timer, triggering events that fall at current time
+    // stops all timer events
+    void stopAll();
+
+    // updates the timer, triggering events that fall at the current time
     void update();
 
     // updates the timer, triggering events that fall at a given time

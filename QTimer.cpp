@@ -30,53 +30,72 @@
 
 // adds a new callback event to the deque and returns a pointer to it
 CallbackEvent* QTimer::newCallbackEvent(uint32_t period, void (*callback)(), uint16_t repeatCount) {
-  CallbackEvent *newEvent = new CallbackEvent(callback, millis(), period, repeatCount);
+  CallbackEvent *newEvent = new CallbackEvent(eventCount, callback, millis(), period, repeatCount);
+  eventCount++;
   ed.addEvent(newEvent);
   return newEvent;
 }
 
 // adds a new pin event to the deque and returns a pointer to it
 PinEvent* QTimer::newPinEvent(uint8_t pin, uint32_t  period, uint8_t startingState, uint16_t toggleCount) {
-  PinEvent *newEvent = new PinEvent(pin, startingState, millis(), period, toggleCount);
+  PinEvent *newEvent = new PinEvent(eventCount, pin, startingState, millis(), period, toggleCount);
+  eventCount++;
   ed.addEvent(newEvent);
   return newEvent;
 }
 
 // creates a one time event that will call the callback after duration
-BaseEvent* QTimer::after(uint32_t duration, void (*callback)()) {
-  return newCallbackEvent(duration, callback, 1);
+uint8_t QTimer::after(uint32_t duration, void (*callback)()) {
+  return newCallbackEvent(duration, callback, 1)->id;
 }
 
 // creates an event that calls the callback every period
-BaseEvent* QTimer::every(uint32_t period, void (*callback)()) {
-  return newCallbackEvent(period, callback, -1);
+uint8_t QTimer::every(uint32_t period, void (*callback)()) {
+  return newCallbackEvent(period, callback, -1)->id;
 }
 
 // creates an event that calls the callback every period repeatCount times
-BaseEvent* QTimer::every(uint32_t period, void (*callback)(), uint16_t repeatCount) {
-  return newCallbackEvent(period, callback, repeatCount);
+uint8_t QTimer::every(uint32_t period, void (*callback)(), uint16_t repeatCount) {
+  return newCallbackEvent(period, callback, repeatCount)->id;
 }
 
 // creates a pin event that oscilates
-BaseEvent* QTimer::oscillate(uint8_t pin, uint32_t period, uint8_t startingState) {
-  return newPinEvent(pin, period, startingState, -1);
+uint8_t QTimer::oscillate(uint8_t pin, uint32_t period, uint8_t startingState) {
+  return newPinEvent(pin, period, startingState, -1)->id;
 }
 
 // creates a pin event that oscilates
-BaseEvent* QTimer::oscillate(uint8_t pin, uint32_t period, uint8_t startingState, uint16_t repeatCount) {
+uint8_t QTimer::oscillate(uint8_t pin, uint32_t period, uint8_t startingState, uint16_t repeatCount) {
   BaseEvent* event = newPinEvent(pin, period, startingState, repeatCount*2 - 1);
   event->trigger();
-  return event;
+  return event->id;
 }
 
 // creates a pulse of length period
-BaseEvent* QTimer::pulse(uint8_t pin, uint32_t period, uint8_t startingState) {
-  return oscillate(pin, period, startingState, 1);
+uint8_t QTimer::pulse(uint8_t pin, uint32_t period, uint8_t startingState) {
+  BaseEvent* event = newPinEvent(pin, period, startingState, 1);
+  event->trigger();
+  return event->id;
 }
 
-// cancels an event at a pointer
-void QTimer::stop(BaseEvent *target) {
-  target->repeatCount = 0;
+// cancels an event with an id of targetID
+void QTimer::stop(uint8_t targetID) {
+  BaseEvent *index = ed.getHead();
+  while(index != nullptr) {
+    if(index->id == targetID) {
+      index->repeatCount = 0;
+      return;
+    }
+    index = index->next;
+  }
+}
+
+void QTimer::stopAll() {
+  BaseEvent *index = ed.getHead();
+  while(index != nullptr) {
+    index->repeatCount = 0;
+    index = index->next;
+  }
 }
 
 // updates all Events in the deque at the current time
