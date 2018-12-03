@@ -29,19 +29,22 @@
 #include "Events.h"
 
 // finds the lowest unused eventID
+// searches using a modified counting sort to ensure ids are found within a reasonable amount of time
 uint8_t QTimer::nextEventID() {
-  uint32_t usedIDs[] = {0, 0, 0, 0, 0, 0, 0, 0};
+  uint32_t usedIDs[] = {0, 0, 0, 0, 0, 0, 0, 0}; // 256 bit memory space for storing used ids
   BaseEvent *index = ed.getHead();
 
+  // go through all events in deque and mark their ids as used
   while(index != nullptr) {
     usedIDs[index->id / 32] |= (1 << (index->id % 32));
     index = index->next;
   }
 
+  // find the first index greater than 0 in the used id memory space that is marked as unused
   for(uint8_t i = 1; i != 0; i++) {
-    if (!(usedIDs[i / 32] & 1 << i % 32)) return i;
+    if (!(usedIDs[i / 32] & 1 << i % 32)) return i; // return available id
   }
-  return 0;
+  return 0; // no event ids available
 }
 
 // adds a new callback event to the deque and returns a pointer to it
@@ -131,7 +134,7 @@ uint8_t QTimer::pulse(uint8_t pin, uint32_t period, uint8_t startingState) {
   }
 }
 
-// cancels an event with an id of targetID
+// marks an event with id of targetID as completed
 void QTimer::stop(uint8_t targetID) {
   BaseEvent *index = ed.getHead();
   while(index != nullptr) {
@@ -143,6 +146,7 @@ void QTimer::stop(uint8_t targetID) {
   }
 }
 
+// marks all events as completed
 void QTimer::stopAll() {
   BaseEvent *index = ed.getHead();
   while(index != nullptr) {
@@ -153,7 +157,7 @@ void QTimer::stopAll() {
 
 // updates all Events in the deque at the current time
 void QTimer::update() {
-  update(millis());
+  update(millis(), ed.getHead());
 }
 
 // updates all Events in the deque at a given time

@@ -34,7 +34,7 @@ class QTimer {
   private:
     EventDeque ed; // EventDeque to hold events
 
-    // function finds lowest unused event id, if it returns 0, none are available
+    // function finds lowest unused event id, returns 0 if none are available
     uint8_t nextEventID();
 
     // private callback event creator used by public event creators
@@ -61,13 +61,15 @@ class QTimer {
     uint8_t oscillate(uint8_t pin, uint32_t period, uint8_t startingState);
     // oscillate -> toggles the state between high and low on a pin every period a specific number of times
     uint8_t oscillate(uint8_t pin, uint32_t period, uint8_t startingState, uint16_t repeatCount);
-    // pulse -> generates a pulse of length period, one period after call
+    // pulse -> generates a pulse of length period, pin ends at !startingState
     uint8_t pulse(uint8_t pin, uint32_t period, uint8_t startingState);
 
-    // cancels an event when passed an event id, it will be cleaned up from memory next time the timer is updated
+    // cancels an event when passed an event id
+    // it will be cleaned up from memory and its id freed for re-use next time the timer is updated
     void stop(uint8_t targetID); 
 
     // stops all timer events
+    // all events will be cleared from memory next time the timer is updated
     void stopAll();
 
     // updates the timer, triggering events that fall at the current time
