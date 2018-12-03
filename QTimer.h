@@ -32,8 +32,10 @@
 
 class QTimer {
   private:
-    uint8_t eventCount; // counts events created
     EventDeque ed; // EventDeque to hold events
+
+    // function finds lowest unused event id, if it returns 0, none are available
+    uint8_t nextEventID();
 
     // private callback event creator used by public event creators
     CallbackEvent* newCallbackEvent(uint32_t  period, void (*callback)(), uint16_t repeatCount);
@@ -46,12 +48,6 @@ class QTimer {
     void update(uint32_t  now, BaseEvent *target);
 
   public:
-    // Constructor
-    QTimer()
-      : eventCount(0)
-    {
-    }
-
     // public event creators
     // duration / period is given in milliseconds
     // each returns the id of the event created

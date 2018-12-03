@@ -28,54 +28,107 @@
 #include "EventDeque.h"
 #include "Events.h"
 
+// finds the lowest unused eventID
+uint8_t QTimer::nextEventID() {
+  uint32_t usedIDs[] = {0, 0, 0, 0, 0, 0, 0, 0};
+  BaseEvent *index = ed.getHead();
+
+  while(index != nullptr) {
+    usedIDs[index->id / 32] |= (1 << (index->id % 32));
+    index = index->next;
+  }
+
+  for(uint8_t i = 1; i != 0; i++) {
+    if (!(usedIDs[i / 32] & 1 << i % 32)) return i;
+  }
+  return 0;
+}
+
 // adds a new callback event to the deque and returns a pointer to it
 CallbackEvent* QTimer::newCallbackEvent(uint32_t period, void (*callback)(), uint16_t repeatCount) {
-  CallbackEvent *newEvent = new CallbackEvent(eventCount, callback, millis(), period, repeatCount);
-  eventCount++;
-  ed.addEvent(newEvent);
-  return newEvent;
+  uint8_t id = nextEventID(); // only create event if id is available
+  if (id) {
+    CallbackEvent *newEvent = new CallbackEvent(id, callback, millis(), period, repeatCount);
+    ed.addEvent(newEvent);
+    return newEvent;
+  } else {
+    return nullptr;
+  }
 }
 
 // adds a new pin event to the deque and returns a pointer to it
 PinEvent* QTimer::newPinEvent(uint8_t pin, uint32_t  period, uint8_t startingState, uint16_t toggleCount) {
-  PinEvent *newEvent = new PinEvent(eventCount, pin, startingState, millis(), period, toggleCount);
-  eventCount++;
-  ed.addEvent(newEvent);
-  return newEvent;
+  uint8_t id = nextEventID(); // only create event if id is available
+  if (id) {
+    PinEvent *newEvent = new PinEvent(id, pin, startingState, millis(), period, toggleCount);
+    ed.addEvent(newEvent);
+    return newEvent;
+  } else {
+    return nullptr;
+  }
 }
 
 // creates a one time event that will call the callback after duration
 uint8_t QTimer::after(uint32_t duration, void (*callback)()) {
-  return newCallbackEvent(duration, callback, 1)->id;
+  CallbackEvent *newEvent = newCallbackEvent(duration, callback, 1);
+  if (newEvent != nullptr) {
+    return newEvent->id;
+  } else {
+    return 0;
+  }
 }
 
 // creates an event that calls the callback every period
 uint8_t QTimer::every(uint32_t period, void (*callback)()) {
-  return newCallbackEvent(period, callback, -1)->id;
+  CallbackEvent *newEvent = newCallbackEvent(period, callback, -1);
+  if (newEvent != nullptr) {
+    return newEvent->id;
+  } else {
+    return 0;
+  }
 }
 
 // creates an event that calls the callback every period repeatCount times
 uint8_t QTimer::every(uint32_t period, void (*callback)(), uint16_t repeatCount) {
-  return newCallbackEvent(period, callback, repeatCount)->id;
+  CallbackEvent *newEvent = newCallbackEvent(period, callback, repeatCount);
+  if (newEvent != nullptr) {
+    return newEvent->id;
+  } else {
+    return 0;
+  }
 }
 
 // creates a pin event that oscilates
 uint8_t QTimer::oscillate(uint8_t pin, uint32_t period, uint8_t startingState) {
-  return newPinEvent(pin, period, startingState, -1)->id;
+  PinEvent *event = newPinEvent(pin, period, startingState, -1);
+  if (event != nullptr) {
+    event->trigger();
+    return event->id;
+  } else {
+    return 0;
+  }
 }
 
 // creates a pin event that oscilates
 uint8_t QTimer::oscillate(uint8_t pin, uint32_t period, uint8_t startingState, uint16_t repeatCount) {
-  BaseEvent* event = newPinEvent(pin, period, startingState, repeatCount*2 - 1);
-  event->trigger();
-  return event->id;
+  PinEvent* event = newPinEvent(pin, period, startingState, repeatCount*2 - 1);
+  if (event != nullptr) {
+    event->trigger();
+    return event->id;
+  } else {
+    return 0;
+  }
 }
 
 // creates a pulse of length period
 uint8_t QTimer::pulse(uint8_t pin, uint32_t period, uint8_t startingState) {
-  BaseEvent* event = newPinEvent(pin, period, startingState, 1);
-  event->trigger();
-  return event->id;
+  PinEvent* event = newPinEvent(pin, period, startingState, 1);
+  if (event != nullptr) {
+    event->trigger();
+    return event->id;
+  } else {
+    return 0;
+  }
 }
 
 // cancels an event with an id of targetID

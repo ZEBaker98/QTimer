@@ -1,5 +1,5 @@
 /*
- *    This file is part of QTimer.
+ *    This file is part of Qtimer.
 
  *    QTimer is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -12,7 +12,7 @@
  *    GNU General Public License for more details.
 
  *    You should have received a copy of the GNU General Public License
- *    along with QTimer.  If not, see <https://www.gnu.org/licenses/>.
+ *    along with Qtimer.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 
@@ -46,9 +46,16 @@ bool toggle = false;
 void toggle13() {
   toggle = !toggle;
   digitalWrite(13, toggle);
+
+  // This is how to blink an led using the pulse function
+  // If given a pin number and starting value it will pulse the pin once for the period,
+  // timer.pulse(byte pin, unsigned long period, bool startingValue);
+  // This also demonstrated how you can create events from within a callback function
+  timer.pulse(10, 100, HIGH);
 }
 
 void setup() {
+  Serial.begin(9600);
   // set all pins to output
   pinMode(13, OUTPUT);
   pinMode(12, OUTPUT);
@@ -69,11 +76,6 @@ void setup() {
   // If given a pin number and starting value
   // timer.oscilate(byte pin, unsigned long period, bool startingValue, int repeatCount);
   timer.oscillate(11, 250, HIGH, 20);
-
-  // This is how to blink an led using the pulse function
-  // If given a pin number and starting value it will pulse the pin once for the period,
-  // timer.oscilate(byte pin, unsigned long period, bool startingValue, int repeatCount);
-  timer.pulse(10, 2000, HIGH);
 
 }
 
