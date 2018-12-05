@@ -32,6 +32,7 @@
 
 class QTimer {
   private:
+    uint32_t now; // holds current time to save memory during update
     EventDeque ed; // EventDeque to hold events
 
     // function finds lowest unused event id, returns 0 if none are available
@@ -45,7 +46,7 @@ class QTimer {
 
     // private updater used by public updators
     // updates a target and all following targets recursively
-    void update(uint32_t  now, BaseEvent *target);
+    void update(BaseEvent *target);
 
   public:
     // public event creators

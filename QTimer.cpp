@@ -157,28 +157,30 @@ void QTimer::stopAll() {
 
 // updates all Events in the deque at the current time
 void QTimer::update() {
-  update(millis(), ed.getHead());
+  this->now = millis();
+  update(ed.getHead());
 }
 
 // updates all Events in the deque at a given time
 void QTimer::update(uint32_t now) {
-  update(now, ed.getHead());
+  this->now = now;
+  update(ed.getHead());
 }
 
 // updates all Events after target at a given time
-void QTimer::update(uint32_t now, BaseEvent *target) {
+void QTimer::update(BaseEvent *target) {
 
   // if target is null, return
   if(target == nullptr) return;
 
   // if target should be triggered at current time, trigger it, otherwise update next event
-  if(now - target->start >= target->period) {
+  if(this->now - target->start >= target->period) {
 
     // if the target has remaining repeats and does not repeat forever (negative repeat value), call its callback
     if(target->repeatCount != 0) target->trigger();
 
     // if target has a next, update it
-    if(target->next != nullptr) update(now, target->next);
+    if(target->next != nullptr) update(target->next);
 
     // after returning from updating next, decrease repeatCount for target by one
     if(target->repeatCount > 0) target->repeatCount--;
@@ -188,7 +190,7 @@ void QTimer::update(uint32_t now, BaseEvent *target) {
     else target->start = target->start + target->period;
 
   } else {
-    update(now, target->next);
+    update(target->next);
   }
 }
 
