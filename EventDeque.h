@@ -38,6 +38,9 @@ class EventDeque {
     // constuctor, initialzes pointers to nullptr
     EventDeque();
 
+    // destructor
+    ~EventDeque();
+
     // accessors for head and tail
     BaseEvent* getHead() { return head; }
     BaseEvent* getTail() { return tail; }

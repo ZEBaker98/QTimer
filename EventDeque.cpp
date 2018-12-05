@@ -33,6 +33,12 @@ EventDeque::EventDeque() {
   tail = nullptr;
 }
 
+EventDeque::~EventDeque() {
+  while(head != nullptr) {
+    deleteHead();
+  }
+}
+
 // addes an event by pointer to deque
 BaseEvent* EventDeque::addEvent(BaseEvent *newEvent) {
 
