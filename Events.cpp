@@ -30,6 +30,7 @@ BaseEvent::BaseEvent(uint8_t id, uint32_t start, uint32_t period, uint16_t repea
 {
 }
 
+// Base event trigger does nothing
 void BaseEvent::trigger() {};
 
 CallbackEvent::CallbackEvent(uint8_t id, void (*callback)(), uint32_t start, uint32_t period, uint16_t repeatCount)
@@ -37,6 +38,7 @@ CallbackEvent::CallbackEvent(uint8_t id, void (*callback)(), uint32_t start, uin
 {
 }
 
+// Callback event calls function pointer when triggered
 void CallbackEvent::trigger() { 
   if (this->callback != nullptr) (*this->callback)();
 }
@@ -45,7 +47,8 @@ PinEvent::PinEvent(uint8_t id, uint8_t pin, uint8_t state, uint32_t start, uint3
   : BaseEvent(id, start, period, repeatCount), pin(pin), state(state)
 {
 }
-
+ 
+// Pin event toggles pin when triggered
 void PinEvent::trigger() {
   digitalWrite(pin, state);
   state = !state;

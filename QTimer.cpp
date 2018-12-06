@@ -112,7 +112,7 @@ uint8_t QTimer::oscillate(uint8_t pin, uint32_t period, uint8_t startingState) {
   }
 }
 
-// creates a pin event that oscilates
+// creates a pin event that oscilates a number of times
 uint8_t QTimer::oscillate(uint8_t pin, uint32_t period, uint8_t startingState, uint16_t repeatCount) {
   PinEvent* event = newPinEvent(pin, period, startingState, repeatCount*2 - 1);
   if (event != nullptr) {
@@ -145,7 +145,6 @@ void QTimer::stop(uint8_t targetID) {
     index = index->next;
   }
 }
-
 // marks all events as completed
 void QTimer::stopAll() {
   BaseEvent *index = ed.getHead();
@@ -169,12 +168,11 @@ void QTimer::update(uint32_t now) {
 
 // updates all Events after target at a given time
 void QTimer::update(BaseEvent *target) {
-
-  // if target is null, return
+  
   if(target == nullptr) return;
 
   // if target should be triggered at current time, trigger it, otherwise update next event
-  if(this->now - target->start >= target->period) {
+  if(now - target->start >= target->period) {
 
     // if the target has remaining repeats and does not repeat forever (negative repeat value), call its callback
     if(target->repeatCount != 0) target->trigger();

@@ -35,28 +35,20 @@ class EventDeque {
     BaseEvent *head, *tail;
 
   public:
-    // constuctor, initialzes pointers to nullptr
     EventDeque();
-
-    // destructor
     ~EventDeque();
 
-    // accessors for head and tail
     BaseEvent* getHead() { return head; }
     BaseEvent* getTail() { return tail; }
 
-    // adds an event by pointer to deque, returns pointer of added event
     BaseEvent* addEvent(BaseEvent *newEvent);
 
-    // pops or deletes the BaseEvent at the head of the deck
     BaseEvent* popHead();
     void deleteHead();
 
-    // pops or deletes the BaseEvent at the tail of the deck
     BaseEvent* popTail();
     void deleteTail();
 
-    // pops or deletes an event at a target location in memory
     BaseEvent* popTarget(BaseEvent *target);
     void deleteTarget(BaseEvent *target);
 };

@@ -27,10 +27,9 @@
 #include "EventDeque.h"
 #include "Events.h"
 
-// initialized head and tail to null
-EventDeque::EventDeque() {
-  head = nullptr;
-  tail = nullptr;
+EventDeque::EventDeque()
+  : head(nullptr), tail(nullptr)
+{
 }
 
 EventDeque::~EventDeque() {
@@ -39,7 +38,6 @@ EventDeque::~EventDeque() {
   }
 }
 
-// addes an event by pointer to deque
 BaseEvent* EventDeque::addEvent(BaseEvent *newEvent) {
 
   // if head is null (Empty Deque), set newEvent as head and tail
@@ -55,26 +53,21 @@ BaseEvent* EventDeque::addEvent(BaseEvent *newEvent) {
     tail = newEvent;
   }
 
-  // return pointer to newEvent
   return newEvent;
 }
 
-// pops and returns the BaseEvent at the head
 BaseEvent* EventDeque::popHead() {
   return popTarget(head);
 }
 
-// deletes the BaseEvent at the head
 void EventDeque::deleteHead() {
   delete popHead();
 }
 
-// pops and returns the BaseEvent at the tail
 BaseEvent* EventDeque::popTail() {
   return popTarget(tail);
 }
 
-// deletes the BaseEvent at the tail
 void EventDeque::deleteTail() {
   delete popTail();
 }
@@ -83,36 +76,29 @@ void EventDeque::deleteTail() {
 BaseEvent* EventDeque::popTarget(BaseEvent *target) {
 
   // if target is null, jump to return and return null
-  if (target != nullptr) {
+  if (target != nullptr) return nullptr;
 
-    // evaluation tree determines if target is the head & tail, just head, just tail, or neither
-    if (target == head) {
-      if (target == tail) {
-        // if target is the head and the tail, empty the deque and return
-        head = nullptr;
-        tail = nullptr;
-      } else {
-        // if target is just head, move head to targets next
-        head = target->next;
-        head->prev = nullptr;
-      }
-    } else {
-      if (target == tail) {
-        // if target is just tail, move tail to targets prev
-        tail = target->prev;
-        tail->next = nullptr;
-      } else {
-        // if target is in the middle of the deck, stitch together targets prev and next
-        target->prev->next = target->next;
-        target->next->prev = target->prev;
-      }
+  // evaluation tree determines where target is in deque
+  if (target == head) {
+    if (target == tail) { // if target is the head and the tail, mark deque as empty
+      head = nullptr;
+      tail = nullptr;
+    } else { // if target is head, move head to target's next
+      head = target->next;
+      head->prev = nullptr;
+    }
+  } else {
+    if (target == tail) { // if target is tail, move tail to targets prev
+      tail = target->prev;
+      tail->next = nullptr;
+    } else { // stitch together target's prev and next if target is not an anchor
+      target->prev->next = target->next;
+      target->next->prev = target->prev;
     }
   }
-  // return popped target
   return target;
 }
 
-// deletes an BaseEvent at a target pointer
 void EventDeque::deleteTarget(BaseEvent *target) {
   delete popTarget(target);
 }
