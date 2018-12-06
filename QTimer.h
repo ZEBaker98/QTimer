@@ -39,28 +39,28 @@ class QTimer {
     uint8_t nextEventID();
 
     // private callback event creator used by public event creators
-    CallbackEvent* newCallbackEvent(uint32_t  period, void (*callback)(), uint16_t repeatCount);
+    CallbackEvent* newCallbackEvent(uint32_t  interval, void (*callback)(), uint16_t repeatCount);
 
     // private pin event creator used by public event creators
-    PinEvent* newPinEvent(uint8_t pin, uint32_t  period, uint8_t startingState, uint16_t toggleCount);
+    PinEvent* newPinEvent(uint8_t pin, uint32_t  interval, uint8_t startingState, uint16_t toggleCount);
 
     // updates a target and all following targets recursively
     void update(BaseEvent *target);
 
   public:
     // event creators
-    // duration/period is given in milliseconds
+    // duration/interval is given in milliseconds
     // each returns the id of the event created
     // after -> creates an event that triggers once after duration
     uint8_t after(uint32_t duration, void (*callback)());
-    // every -> creates an event that triggers every period
-    uint8_t every(uint32_t period, void (*callback)());
-    uint8_t every(uint32_t period, void (*callback)(),uint16_t repeatCount);
-    // oscillate -> toggles the state between high and low on a pin every period
-    uint8_t oscillate(uint8_t pin, uint32_t period, uint8_t startingState);
-    uint8_t oscillate(uint8_t pin, uint32_t period, uint8_t startingState, uint16_t repeatCount);
-    // pulse -> generates a pulse of length period, pin ends at !startingState
-    uint8_t pulse(uint8_t pin, uint32_t period, uint8_t startingState);
+    // every -> creates an event that triggers every interval
+    uint8_t every(uint32_t interval, void (*callback)());
+    uint8_t every(uint32_t interval, void (*callback)(),uint16_t repeatCount);
+    // oscillate -> toggles the state between high and low on a pin every interval
+    uint8_t oscillate(uint8_t pin, uint32_t interval, uint8_t startingState);
+    uint8_t oscillate(uint8_t pin, uint32_t interval, uint8_t startingState, uint16_t repeatCount);
+    // pulse -> generates a pulse of length interval, pin ends at !startingState
+    uint8_t pulse(uint8_t pin, uint32_t interval, uint8_t startingState);
 
     // cancels an event when passed an event id
     void stop(uint8_t targetID); 

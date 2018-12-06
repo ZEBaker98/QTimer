@@ -25,16 +25,16 @@
 
 #include "Events.h"
 
-BaseEvent::BaseEvent(uint8_t id, uint32_t start, uint32_t period, uint16_t repeatCount) 
-  : id(id), prev(nullptr), next(nullptr), start(start), period(period), repeatCount(repeatCount) 
+BaseEvent::BaseEvent(uint8_t id, uint32_t start, uint32_t interval, uint16_t repeatCount) 
+  : id(id), prev(nullptr), next(nullptr), start(start), interval(interval), repeatCount(repeatCount) 
 {
 }
 
 // Base event trigger does nothing
 void BaseEvent::trigger() {};
 
-CallbackEvent::CallbackEvent(uint8_t id, void (*callback)(), uint32_t start, uint32_t period, uint16_t repeatCount)
-  : BaseEvent(id, start, period, repeatCount), callback(callback) 
+CallbackEvent::CallbackEvent(uint8_t id, void (*callback)(), uint32_t start, uint32_t interval, uint16_t repeatCount)
+  : BaseEvent(id, start, interval, repeatCount), callback(callback) 
 {
 }
 
@@ -43,8 +43,8 @@ void CallbackEvent::trigger() {
   if (this->callback != nullptr) (*this->callback)();
 }
 
-PinEvent::PinEvent(uint8_t id, uint8_t pin, uint8_t state, uint32_t start, uint32_t period, uint16_t repeatCount)
-  : BaseEvent(id, start, period, repeatCount), pin(pin), state(state)
+PinEvent::PinEvent(uint8_t id, uint8_t pin, uint8_t state, uint32_t start, uint32_t interval, uint16_t repeatCount)
+  : BaseEvent(id, start, interval, repeatCount), pin(pin), state(state)
 {
 }
  

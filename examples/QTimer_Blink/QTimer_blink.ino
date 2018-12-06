@@ -48,8 +48,8 @@ void toggle13() {
   digitalWrite(13, toggle);
 
   // This is how to blink an led using the pulse function
-  // If given a pin number and starting value it will pulse the pin once for the period,
-  // timer.pulse(byte pin, unsigned long period, bool startingValue);
+  // If given a pin number and starting value it will pulse the pin once for the interval,
+  // timer.pulse(byte pin, unsigned long interval, bool startingValue);
   // This also demonstrated how you can create events from within a callback function
   timer.pulse(10, 100, HIGH);
 }
@@ -64,17 +64,17 @@ void setup() {
 
   // This is an example of how to blink an led using a callback function
   // the function must return void and take no arguments
-  // timer.every(unsigned long period, callbackFunction);
+  // timer.every(unsigned long interval, callbackFunction);
   timer.every(1000, toggle13);
 
   // This is how to blink an led using the oscillate function
-  // If given a pin number and starting value this will toggle the led every period
-  // timer.oscilate(byte pin, unsigned long period, bool startingValue);
+  // If given a pin number and starting value this will toggle the led every interval
+  // timer.oscilate(byte pin, unsigned long interval, bool startingValue);
   timer.oscillate(12, 500, HIGH);
 
   // This is how to blink an led using the oscillate function for a number of times
   // If given a pin number and starting value
-  // timer.oscilate(byte pin, unsigned long period, bool startingValue, int repeatCount);
+  // timer.oscilate(byte pin, unsigned long interval, bool startingValue, int repeatCount);
   timer.oscillate(11, 250, HIGH, 20);
 
 }

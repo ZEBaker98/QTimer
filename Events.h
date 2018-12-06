@@ -31,10 +31,10 @@ class BaseEvent {
   public:
     uint8_t id;
     BaseEvent *prev, *next; // pointers to prev & next nodes
-    uint32_t start, period; // start time in ms & time between triggers
+    uint32_t start, interval; // start time in ms & time between triggers
     uint16_t repeatCount; // how many times to repeat event (negative means forever)
 
-    BaseEvent(uint8_t id, uint32_t start, uint32_t period, uint16_t repeatCount);
+    BaseEvent(uint8_t id, uint32_t start, uint32_t interval, uint16_t repeatCount);
 
     // Overridable function to trigger event
     virtual void trigger();
@@ -45,7 +45,7 @@ class CallbackEvent : public BaseEvent {
     void (*callback)(); // pointer to callback function
 
   public:
-    CallbackEvent(uint8_t id, void (*callback)(), uint32_t start, uint32_t period, uint16_t repeatCount);
+    CallbackEvent(uint8_t id, void (*callback)(), uint32_t start, uint32_t interval, uint16_t repeatCount);
 
     // Override of trigger function calls callback function
     void trigger();
@@ -57,7 +57,7 @@ class PinEvent : public BaseEvent {
     uint8_t state; // holds state of pin
 
   public:
-    PinEvent(uint8_t id, uint8_t pin, uint8_t state, uint32_t start, uint32_t period, uint16_t repeatCount);
+    PinEvent(uint8_t id, uint8_t pin, uint8_t state, uint32_t start, uint32_t interval, uint16_t repeatCount);
 
     // Override of trigger function toggle pin state
     void trigger();
