@@ -73,3 +73,66 @@ timer.every(interval, callback, repeatCount);
 ```
 
 This is exactly the same as the previous `timer.every()` but now the event will stop after `repeatCount` times. `repeatCount` is an `unsigned int`.
+
+### Pin Events
+Pin events trigger changes on pins for your arduino when they trigger.
+
+#### Oscilating a pin
+
+A pin can be set to oscillate using
+```cpp
+timer.oscillate(pin, interval, startingState);
+```
+
+`pin` is a `byte` representing which arduino pin the event should be passed to. `interval` is an `unsigned long` represengint how long the pulse should last. `startingState` is a `bool` (HIGH or LOW) that states which state the pin should start at.
+
+For example
+```cpp
+timer.oscillate(4, 2000, HIGH);
+```
+will set pin 4 `HIGH` for two seconds and then drop it to `LOW` for two seconds and repeat.
+```cpp
+timer.oscillate(7, 250, LOW);
+```
+will set pin 7 `LOW` for a quarter of a second and then set it to `HIGH` for a quarter of a second and then repeat.
+
+Oscillations can be set to only repeat for a specific number of cycles by providing a repeatCount using
+```cpp
+timer.oscillate(pin, interval, startingState, repeatCount);
+```
+`repeatCount` is an `unsigned int`. One repeat counts as one high interval and one low interval combined. Oscilations will allways set the pin to an end state of `!startingState`
+    
+
+#### Pulsing a pin
+
+A pulse can be generated on a pin using
+```cpp
+timer.pulse(pin, interval, startingState);
+```
+
+`pin` is a `byte` representing which arduino pin the event should be passed to. `interval` is an `unsigned long` represengint how long the pulse should last. `startingState` is a `bool` (HIGH or LOW) that states which state the pin should start at.
+
+For example
+```cpp
+timer.pulse(13, 1000, HIGH);
+```
+will set pin 13 `HIGH` for one second and then drop it to `LOW`and leave it there.
+```cpp
+timer.pulse(10, 500, LOW);
+```
+will set pin 10 `LOW` for half a second and then set it to `HIGH` and leave it there.
+
+`timer.pulse()` will leave the pin int the state `!startingState`.
+
+## Stopping Events
+
+All event creators return a `byte` representing the id of the event created. That id can be passed to 
+```cpp
+timer.stop(id);
+```
+to stop an event. When an event is stopped, the memory it uses won't be freed until the next time the timer updates. Event ids are reused and new events, when created, find the lowest id not being used by another event and take it for themselves.
+
+All of a timers events can be stopped using
+```cpp
+timer.stopAll();
+```
