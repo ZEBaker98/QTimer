@@ -1,7 +1,7 @@
 # QTimer
 An Alternative Timer for Arduino
 
-Timers can be used to schedule tasks for your arduino to do in the future. QTimer is a non blocking timer which means you can execute your own code along side QTimer. An timer update function is provided for you to integrate your code. Whenever an update is called QTimer will use the `millis()` function to firugre out what events need to be triggered. It's not perfectly acurate but it tries it's best to trigger your actions as close to the correct time as it can.
+Timers can be used to schedule tasks for your arduino to do in the future. QTimer is a non blocking timer which means you can execute your own code along side QTimer. An timer update function is provided for you to integrate your code. Whenever an update is called, QTimer will use the `millis()` function to figure out what events need to be triggered. It's not perfectly acurate but it tries it's best to trigger your actions as close to the correct time as it can.
 
 # Why use QTimer?
 QTimer is different than other arduino timers or task schedulers. Instead of using an array to store events, QTimer uses a queue-like data structure, hence the name QTimer. This sturcture  only uses memory when you add events to it and is optimized to check all events as fast as it can. With QTimer you have up to 255 events running simultaneously!
